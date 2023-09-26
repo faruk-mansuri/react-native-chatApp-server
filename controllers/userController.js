@@ -40,5 +40,7 @@ export const updateUser = async (req, res) => {
 };
 
 export const getAllUsers = async (req, res) => {
-  res.send('all user');
+  const { userId } = req.user;
+  const users = await User.find({ _id: { $ne: userId } });
+  res.status(StatusCodes.OK).json({ users });
 };
