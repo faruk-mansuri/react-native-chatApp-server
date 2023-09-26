@@ -38,3 +38,7 @@ export const updateUser = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ msg: 'update user' });
 };
+
+export const getAllUsers = async (req, res) => {
+  res.send('all user');
+};

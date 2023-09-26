@@ -6,7 +6,12 @@ import {
 import { verifyJWT } from '../utils/tokenUtils.js';
 
 export const authenticateUser = (req, res, next) => {
-  const token = req.cookies.token;
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer')) {
+    throw new UnauthenticatedError('authentication invalid');
+  }
+  const token = authHeader.split(' ')[1];
+
   if (!token) throw new UnauthenticatedError('authentication invalid');
 
   try {
