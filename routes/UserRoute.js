@@ -20,6 +20,6 @@ router
   .route('/update-user')
   .patch(upload.single('avatar'), updateUserInput, updateUser);
 
-router.route('/get-all-users/:id').get(getAllUsers);
+router.route('/get-all-users').get(getAllUsers);
 
 export default router;
