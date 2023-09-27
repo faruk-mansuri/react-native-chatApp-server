@@ -61,3 +61,14 @@ export const friendRequest = async (req, res) => {
   // const
   res.status(StatusCodes.OK).json({ msg: 'friend request' });
 };
+
+export const showAllFriendsRequest = async (req, res) => {
+  const user = await User.findById(req.user.userId)
+    .populate('ReceiveFriendRequest', 'name email image')
+    .lean();
+  // The lean method is a way to optimize the performance of Mongoose queries by returning plain JavaScript objects instead of Mongoose documents. Mongoose documents have some extra features and methods that make them more powerful and flexible, but also more memory-intensive and slower to process. Sometimes, we don’t need all these features and methods, and we just want to get the raw data from the database. In that case, we can use the lean method to speed up our queries and reduce memory usage.
+
+  res
+    .status(StatusCodes.OK)
+    .json({ friendsRequest: user.ReceiveFriendRequest });
+};
