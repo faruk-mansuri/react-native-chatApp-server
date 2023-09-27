@@ -97,3 +97,13 @@ export const acceptFriendRequest = async (req, res) => {
     .status(StatusCodes.OK)
     .json({ msg: 'friend request accepted successfully' });
 };
+
+export const getAcceptedFriends = async (req, res) => {
+  const user = await User.findById(req.user.userId).populate(
+    'friends',
+    'name email image'
+  );
+  const friends = user.friends;
+
+  res.status(StatusCodes.OK).json({ friends });
+};
