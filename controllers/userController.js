@@ -72,3 +72,28 @@ export const showAllFriendsRequest = async (req, res) => {
     .status(StatusCodes.OK)
     .json({ friendsRequest: user.ReceiveFriendRequest });
 };
+
+export const acceptFriendRequest = async (req, res) => {
+  const requestSenderId = req.params.id;
+
+  const user = await User.findById(req.user.userId);
+  const sender = await User.findById(requestSenderId);
+
+  user.friends.push(requestSenderId);
+  sender.friends.push(req.user.userId);
+
+  user.ReceiveFriendRequest = user.ReceiveFriendRequest.filter(
+    (request) => request.toString() !== requestSenderId
+  );
+
+  sender.sendFriendsRequest = sender.sendFriendsRequest.filter(
+    (request) => request.toString() !== req.user.userId
+  );
+
+  await user.save();
+  await sender.save();
+
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: 'friend request accepted successfully' });
+};
