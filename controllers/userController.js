@@ -44,3 +44,20 @@ export const getAllUsers = async (req, res) => {
   const users = await User.find({ _id: { $ne: userId } });
   res.status(StatusCodes.OK).json({ users });
 };
+
+export const friendRequest = async (req, res) => {
+  const { userId } = req.user;
+  const selectedUserId = req.params.id;
+
+  // add user to friend request
+  await User.findByIdAndUpdate(selectedUserId, {
+    $push: { ReceiveFriendRequest: userId },
+  });
+
+  // update sender's friend request
+  await User.findByIdAndUpdate(userId, {
+    $push: { sendFriendsRequest: selectedUserId },
+  });
+  // const
+  res.status(StatusCodes.OK).json({ msg: 'friend request' });
+};

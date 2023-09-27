@@ -5,6 +5,7 @@ import {
   getCurrentUser,
   updateUser,
   getAllUsers,
+  friendRequest,
 } from '../controllers/userController.js';
 import { updateUserInput } from '../middleware/validationMiddleware.js';
 import { authorizedPermission } from '../middleware/authMiddleware.js';
@@ -21,5 +22,7 @@ router
   .patch(upload.single('avatar'), updateUserInput, updateUser);
 
 router.route('/get-all-users').get(getAllUsers);
+
+router.route('/friend-request/:id').post(friendRequest);
 
 export default router;
