@@ -13,7 +13,6 @@ import mongoSanitize from 'express-mongo-sanitize';
 import cors from 'cors';
 
 // routers
-import JobRouter from './routes/JobRoute.js';
 import AuthRouter from './routes/AuthRoute.js';
 import UserRouter from './routes/UserRoute.js';
 import MessageRouter from './routes/MessageRoute.js';
@@ -47,7 +46,7 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use('/api/v1/auth', AuthRouter);
 app.use('/api/v1/users', authenticateUser, UserRouter);
-app.use('/api/v1/jobs', authenticateUser, JobRouter);
+app.use('/api/v1/messages', authenticateUser, MessageRouter);
 
 // app.get('*', (req, res) => {
 //   res.sendFile(path.resolve(__dirname, './client/dist', 'index.html'));

@@ -5,7 +5,8 @@ import {
   sendMessage,
   receiveMessage,
 } from '../controllers/messageController.js';
+import upload from '../middleware/multerMiddleware.js';
 
-router.route('/').get(getAllMessage);
+router.route('/:receiverId').post(upload.single('avatar'), sendMessage);
 
 export default router;
