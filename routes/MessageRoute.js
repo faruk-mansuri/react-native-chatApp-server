@@ -11,6 +11,6 @@ import upload from '../middleware/multerMiddleware.js';
 router
   .route('/:receiverId')
   .get(conversation)
-  .post(upload.single('avatar'), sendMessage);
+  .post(upload.single('image'), sendMessage);
 
 export default router;

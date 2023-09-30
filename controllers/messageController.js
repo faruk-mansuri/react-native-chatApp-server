@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import Message from '../models/MessageModel.js';
+import { formatImage } from '../middleware/multerMiddleware.js';
 
 export const getAllMessage = (req, res) => {
   res.send('get all message');
@@ -8,6 +9,12 @@ export const getAllMessage = (req, res) => {
 export const sendMessage = async (req, res) => {
   const { messageType, message } = req.body;
   const { receiverId } = req.params;
+
+  if (req.file) {
+    const file = formatImage(req.file);
+    const response = await cloudinary.v2.uploader.upload(file);
+    message = response.secure_url;
+  }
 
   const newMessage = await Message.create({
     senderId: req.user.userId,
