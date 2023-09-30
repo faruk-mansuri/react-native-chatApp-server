@@ -39,9 +39,6 @@ export const conversation = async (req, res) => {
 export const deleteMessages = async (req, res) => {
   let { messagesIds } = req.body;
 
-  messagesIds = messagesIds.map((messageId) =>
-    mongoose.Types.ObjectId(messageId)
-  );
   await Message.deleteMany({ _id: { $in: messagesIds } });
   res.status(StatusCodes.OK).send('Messages deleted successfully');
 };
