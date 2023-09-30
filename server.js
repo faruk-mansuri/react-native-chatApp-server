@@ -6,21 +6,13 @@ const app = express();
 
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import cookieParser from 'cookie-parser';
 import cloudinary from 'cloudinary';
-import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
 import cors from 'cors';
 
 // routers
 import AuthRouter from './routes/AuthRoute.js';
 import UserRouter from './routes/UserRoute.js';
 import MessageRouter from './routes/MessageRoute.js';
-
-// public
-// import { dirname } from 'path';
-// import { fileURLToPath } from 'url';
-// import path from 'path';
 
 // middleware
 import errorHandlerMiddleware from './middleware/errorHandlerMiddleware.js';
@@ -32,25 +24,15 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
-// const __dirname = dirname(fileURLToPath(import.meta.url));
-// app.use(express.static(path.resolve(__dirname, './client/dist')));
-
 app.use(cors());
 app.use(express.json());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
-// app.use(cookieParser());
-// app.use(helmet());
-// app.use(mongoSanitize());
 
 app.use('/api/v1/auth', AuthRouter);
 app.use('/api/v1/users', authenticateUser, UserRouter);
 app.use('/api/v1/messages', authenticateUser, MessageRouter);
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.resolve(__dirname, './client/dist', 'index.html'));
-// });
 
 app.use('*', (req, res) => {
   res.status(404).json({ msg: 'no found' });

@@ -1,7 +1,6 @@
 import { Router } from 'express';
 const router = Router();
 import {
-  getApplicationStats,
   getCurrentUser,
   updateUser,
   getAllUsers,
@@ -17,10 +16,6 @@ import { authorizedPermission } from '../middleware/authMiddleware.js';
 import upload from '../middleware/multerMiddleware.js';
 
 router.route('/current-user').get(getCurrentUser);
-
-router
-  .route('/admin/app-stats')
-  .get(authorizedPermission('admin'), getApplicationStats);
 
 router
   .route('/update-user')
