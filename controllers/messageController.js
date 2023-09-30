@@ -3,10 +3,6 @@ import Message from '../models/MessageModel.js';
 import cloudinary from 'cloudinary';
 import { formatImage } from '../middleware/multerMiddleware.js';
 
-export const getAllMessage = (req, res) => {
-  res.send('get all message');
-};
-
 export const sendMessage = async (req, res) => {
   let { messageType, message } = req.body;
   const { receiverId } = req.params;
@@ -38,6 +34,10 @@ export const conversation = async (req, res) => {
 
   res.status(StatusCodes.OK).json(messages);
 };
-export const receiveMessage = (req, res) => {
-  res.send('message receive');
+
+export const deleteMessages = async (req, res) => {
+  const { messagesIds } = req.params;
+
+  await Message.deleteMany({ _id: { $in: messagesId } });
+  res.status(StatusCodes.OK).send('Messages deleted successfully');
 };

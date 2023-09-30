@@ -1,10 +1,9 @@
 import { Router } from 'express';
 const router = Router();
 import {
-  getAllMessage,
   sendMessage,
-  receiveMessage,
   conversation,
+  deleteMessages,
 } from '../controllers/messageController.js';
 import upload from '../middleware/multerMiddleware.js';
 
@@ -12,5 +11,7 @@ router
   .route('/:receiverId')
   .get(conversation)
   .post(upload.single('message'), sendMessage);
+
+router.route('/deleteMessages/:messagesIds').delete(deleteMessages);
 
 export default router;
