@@ -37,14 +37,12 @@ export const conversation = async (req, res) => {
 };
 
 export const deleteMessages = async (req, res) => {
-  let { messagesIds } = req.body;
-  console.log(req);
-  console.log('hello');
-  console.log(req.body);
+  let id = req.body.messagesIds;
+  console.log('id', id);
 
   // await Message.deleteMany({ _id: { $in: messagesIds } });
 
-  return res.status(StatusCodes.OK).json(messagesIds);
+  return res.status(StatusCodes.OK).json(id);
 
   res.status(StatusCodes.OK).send('Messages deleted successfully');
 };
