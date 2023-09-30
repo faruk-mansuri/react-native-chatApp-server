@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import Message from '../models/MessageModel.js';
+import cloudinary from 'cloudinary';
 import { formatImage } from '../middleware/multerMiddleware.js';
 
 export const getAllMessage = (req, res) => {
