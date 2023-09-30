@@ -40,5 +40,8 @@ export const deleteMessages = async (req, res) => {
   let { messagesIds } = req.body;
 
   await Message.deleteMany({ _id: { $in: messagesIds } });
+
+  return res.status(StatusCodes.OK).json(messagesIds);
+
   res.status(StatusCodes.OK).send('Messages deleted successfully');
 };
