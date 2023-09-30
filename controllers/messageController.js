@@ -37,7 +37,7 @@ export const conversation = async (req, res) => {
 };
 
 export const deleteMessages = async (req, res) => {
-  let { messagesIds } = req.params;
+  let { messagesIds } = req.body;
 
   messagesIds = messagesIds.map((messageId) =>
     mongoose.Types.ObjectId(messageId)
