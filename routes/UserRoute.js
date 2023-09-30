@@ -9,6 +9,8 @@ import {
   showAllFriendsRequest,
   acceptFriendRequest,
   getAcceptedFriends,
+  getSentFriendRequest,
+  getAllFriends,
 } from '../controllers/userController.js';
 import { updateUserInput } from '../middleware/validationMiddleware.js';
 import { authorizedPermission } from '../middleware/authMiddleware.js';
@@ -33,5 +35,9 @@ router.route('/friend-request/accept/:id').post(acceptFriendRequest);
 router.route('/friend-request/:id').post(friendRequest);
 
 router.route('/accepted-friends').get(getAcceptedFriends);
+
+router.route('/sent/friend-request').get(getSentFriendRequest);
+
+router.route('/friends-list').get(getAllFriends);
 
 export default router;

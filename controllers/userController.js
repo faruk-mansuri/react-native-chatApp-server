@@ -3,6 +3,7 @@ import Job from '../models/JobModel.js';
 import { StatusCodes } from 'http-status-codes';
 import cloudinary from 'cloudinary';
 import { formatImage } from '../middleware/multerMiddleware.js';
+import { NotFoundError } from '../errors/customError.js';
 
 export const getCurrentUser = async (req, res) => {
   // const user = await User.findOne({ _id: req.user.userId }).select('-password');
@@ -106,4 +107,23 @@ export const getAcceptedFriends = async (req, res) => {
   const friends = user.friends;
 
   res.status(StatusCodes.OK).json({ friends });
+};
+
+export const getSentFriendRequest = async (req, res) => {
+  const user = await User.findById(req.user.userId).populate(
+    'sendFriendsRequest',
+    'name email avatar'
+  );
+  const sentFriendRequests = user.sendFriendsRequest;
+  res.status(StatusCodes.OK).json({ sentFriendRequests });
+};
+
+export const getAllFriends = async (req, res) => {
+  const user = await User.findById(req.user.userId);
+
+  if (user.friends.length < 1)
+    throw new NotFoundError("Currently you don't have any friends");
+
+  // const friendsIds = user.friends.map((friend) => friend._id);
+  res.status(StatusCodes.OK).json({ friendsIds: user.friends });
 };
