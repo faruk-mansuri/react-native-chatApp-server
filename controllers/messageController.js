@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import Message from '../models/MessageModel.js';
 import cloudinary from 'cloudinary';
 import { formatImage } from '../middleware/multerMiddleware.js';
+import mongoose from 'mongoose';
 
 export const sendMessage = async (req, res) => {
   let { messageType, message } = req.body;
@@ -36,8 +37,11 @@ export const conversation = async (req, res) => {
 };
 
 export const deleteMessages = async (req, res) => {
-  const { messagesIds } = req.params;
+  let { messagesIds } = req.params;
 
+  messagesIds = messagesIds.map((messageId) =>
+    mongoose.Types.ObjectId(messageId)
+  );
   await Message.deleteMany({ _id: { $in: messagesIds } });
   res.status(StatusCodes.OK).send('Messages deleted successfully');
 };
