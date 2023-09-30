@@ -25,6 +25,7 @@ export const sendMessage = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ msg: 'Message sent successfully' });
 };
+
 export const conversation = async (req, res) => {
   const { receiverId } = req.params;
 
