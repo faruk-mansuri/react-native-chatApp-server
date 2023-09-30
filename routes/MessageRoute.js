@@ -12,6 +12,6 @@ router
   .get(conversation)
   .post(upload.single('message'), sendMessage);
 
-router.route('/deleteMessages').delete(deleteMessages);
+router.route('/deleteMessages').post(deleteMessages);
 
 export default router;
