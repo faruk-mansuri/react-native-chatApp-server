@@ -38,6 +38,7 @@ export const conversation = async (req, res) => {
 
 export const deleteMessages = async (req, res) => {
   const { messagesIds } = req.body;
+  console.log('hello');
   console.log(messagesIds);
 
   // await Message.deleteMany({ _id: { $in: messagesIds } });

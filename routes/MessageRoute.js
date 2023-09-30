@@ -7,7 +7,7 @@ import {
 } from '../controllers/messageController.js';
 import upload from '../middleware/multerMiddleware.js';
 
-router.route('/deleteMessages').delete(deleteMessages);
+router.route('/deleteMessages').post(deleteMessages);
 router
   .route('/:receiverId')
   .get(conversation)
