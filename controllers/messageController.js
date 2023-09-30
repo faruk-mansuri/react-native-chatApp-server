@@ -8,16 +8,13 @@ export const getAllMessage = (req, res) => {
 };
 
 export const sendMessage = async (req, res) => {
-  console.log(1);
-  const { messageType, message } = req.body;
+  let { messageType, message } = req.body;
   const { receiverId } = req.params;
-  console.log(messageType, message);
   if (req.file) {
     const file = formatImage(req.file);
     const response = await cloudinary.v2.uploader.upload(file);
     message = response.secure_url;
   }
-  console.log(3);
 
   const newMessage = await Message.create({
     senderId: req.user.userId,
@@ -26,7 +23,6 @@ export const sendMessage = async (req, res) => {
     message,
   });
 
-  console.log(4);
   res.status(StatusCodes.OK).json({ msg: 'Message sent successfully' });
 };
 
