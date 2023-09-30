@@ -45,5 +45,7 @@ export const deleteMessages = async (req, res) => {
 
   // return res.status(StatusCodes.OK).json({ msg: 'hello' });
 
+  return res.status(StatusCodes.OK).json({ msg: messagesIds });
+
   res.status(StatusCodes.OK).json({ msg: 'Messages deleted successfully' });
 };
