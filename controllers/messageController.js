@@ -42,10 +42,9 @@ export const deleteMessages = async (req, res) => {
 
   messagesIds.forEach(async (messageId) => {
     const message = await Message.findById(messageId);
-    console.log(message);
+
     if (message.messageType === 'image') {
-      console.log('message', message);
-      await cloudinary.v2.uploader.destroy(message);
+      await cloudinary.v2.uploader.destroy(message.message);
     }
   });
 
