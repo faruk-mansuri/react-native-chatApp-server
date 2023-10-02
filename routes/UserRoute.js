@@ -10,6 +10,8 @@ import {
   getAcceptedFriends,
   getSentFriendRequest,
   getAllFriends,
+  deleteProfile,
+  deleteProfileByAdmin,
 } from '../controllers/userController.js';
 import { updateUserInput } from '../middleware/validationMiddleware.js';
 import { authorizedPermission } from '../middleware/authMiddleware.js';
@@ -34,5 +36,11 @@ router.route('/accepted-friends').get(getAcceptedFriends);
 router.route('/sent/friend-request').get(getSentFriendRequest);
 
 router.route('/friends-list').get(getAllFriends);
+
+router.route('/delete-user-profile').delete(deleteProfile);
+
+router
+  .route('/admin-delete-user-profile/:userId')
+  .delete(authorizedPermission('admin'), deleteProfileByAdmin);
 
 export default router;

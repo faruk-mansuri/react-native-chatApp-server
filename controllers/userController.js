@@ -1,4 +1,5 @@
 import User from '../models/UserModel.js';
+import Message from '../models/MessageModel.js';
 import { StatusCodes } from 'http-status-codes';
 import cloudinary from 'cloudinary';
 import { formatImage } from '../middleware/multerMiddleware.js';
@@ -119,4 +120,79 @@ export const getAllFriends = async (req, res) => {
 
   // const friendsIds = user.friends.map((friend) => friend._id);
   res.status(StatusCodes.OK).json({ friendsIds: user.friends });
+};
+
+export const deleteProfile = async (req, res) => {
+  // remove user from friends, ReceiveFriendRequest and sendFriendsRequest from others users list
+  await User.updateMany(
+    {
+      $or: [
+        { ReceiveFriendRequest: req.user.userId },
+        { friends: req.user.userId },
+        { sendFriendsRequest: req.user.userId },
+      ],
+    },
+    {
+      $pull: {
+        ReceiveFriendRequest: req.user.userId,
+        friends: req.user.userId,
+        sendFriendsRequest: req.user.userId,
+      },
+    }
+  );
+
+  // delete all messages
+  const deletedMessages = await Message.deleteMany({
+    $or: [{ senderId: req.user.userId }, { receiverId: req.user.userId }],
+  });
+
+  // remove profile image from cloudinary
+  const user = await User.findById(req.user.userId);
+  if (user.avatarPublicId) {
+    await cloudinary.v2.uploader.destroy(user.avatarPublicId);
+  }
+
+  await User.findByIdAndDelete(req.user.userId);
+
+  res.status(StatusCodes.OK).json({ msg: 'user deleted successfully' });
+};
+
+export const deleteProfileByAdmin = async (req, res) => {
+  const { userId } = req.params;
+
+  // remove user from friends, ReceiveFriendRequest and sendFriendsRequest from others users list
+  await User.updateMany(
+    {
+      $or: [
+        { ReceiveFriendRequest: userId },
+        { friends: userId },
+        { sendFriendsRequest: userId },
+      ],
+    },
+    {
+      $pull: {
+        ReceiveFriendRequest: userId,
+        friends: userId,
+        sendFriendsRequest: userId,
+      },
+    }
+  );
+
+  // delete all messages
+  // const messages = await Message.findByIdAndDelete({
+  //   $or: [
+  //     { senderId: req.user.userId, receiverId: receiverId },
+  //     { receiverId: req.user.userId },
+  //   ],
+  // });
+
+  // remove profile image from cloudinary
+  const user = await User.findById(userId);
+  if (user.avatarPublicId) {
+    await cloudinary.v2.uploader.destroy(user.avatarPublicId);
+  }
+
+  await User.findByIdAndDelete(userId);
+
+  res.status(StatusCodes.OK).json({ msg: 'user deleted successfully' });
 };

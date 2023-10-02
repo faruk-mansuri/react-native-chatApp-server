@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 export const sendMessage = async (req, res) => {
   let { messageType, message } = req.body;
   const { receiverId } = req.params;
+
   if (req.file) {
     const file = formatImage(req.file);
     const response = await cloudinary.v2.uploader.upload(file);
@@ -38,6 +39,14 @@ export const conversation = async (req, res) => {
 
 export const deleteMessages = async (req, res) => {
   const { messagesIds } = req.body;
+
+  messagesIds.forEach(async (messageId) => {
+    const message = await Message.findById(messageId);
+    if (message.messageType === 'image') {
+      await cloudinary.v2.uploader.destroy(message);
+    }
+  });
+
   await Message.deleteMany({ _id: { $in: messagesIds } });
 
   res.status(StatusCodes.OK).json({ msg: 'Messages deleted successfully' });
