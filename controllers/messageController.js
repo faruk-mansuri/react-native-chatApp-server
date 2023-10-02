@@ -46,7 +46,7 @@ export const deleteMessages = async (req, res) => {
   // delete all message where messageType=="text"
   await Message.deleteMany({ _id: { $in: messagesIds }, messageType: 'text' });
 
-  // storing messages
+  // storing images messages
   const messages = await Message.find({
     _id: { $in: messagesIds },
     messageType: 'image',

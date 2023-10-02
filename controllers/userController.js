@@ -123,6 +123,41 @@ export const getAllFriends = async (req, res) => {
 };
 
 export const deleteProfile = async (req, res) => {
+  // find all messages
+  const deletedMessages = await Message.find(
+    {
+      $or: [{ senderId: req.user.userId }, { receiverId: req.user.userId }],
+    },
+    '_id'
+  );
+
+  const deleteMessagesIds = deletedMessages.map((message) =>
+    message._id.toString()
+  );
+
+  // delete all message where messageType === "text"
+  await Message.deleteMany({
+    _id: { $in: deleteMessagesIds },
+    messageType: 'text',
+  });
+
+  // storing messagesType === "image"
+  const imageMessagesId = await Message.find({
+    _id: { $in: deleteMessagesIds },
+    messageType: 'image',
+  });
+
+  // delete images from message
+  await Message.deleteMany({
+    _id: { $in: imageMessagesId },
+    messageType: 'image',
+  });
+
+  // delete image from cloudinary
+  imageMessagesId.forEach(async (message) => {
+    await cloudinary.v2.uploader.destroy(message.messagePublicId);
+  });
+
   // remove user from friends, ReceiveFriendRequest and sendFriendsRequest from others users list
   await User.updateMany(
     {
@@ -141,11 +176,6 @@ export const deleteProfile = async (req, res) => {
     }
   );
 
-  // delete all messages
-  const deletedMessages = await Message.deleteMany({
-    $or: [{ senderId: req.user.userId }, { receiverId: req.user.userId }],
-  });
-
   // remove profile image from cloudinary
   const user = await User.findById(req.user.userId);
   if (user.avatarPublicId) {
@@ -159,6 +189,41 @@ export const deleteProfile = async (req, res) => {
 
 export const deleteProfileByAdmin = async (req, res) => {
   const { userId } = req.params;
+
+  // find all messages
+  const deletedMessages = await Message.find(
+    {
+      $or: [{ senderId: userId }, { receiverId: userId }],
+    },
+    '_id'
+  );
+
+  const deleteMessagesIds = deletedMessages.map((message) =>
+    message._id.toString()
+  );
+
+  // delete all message where messageType === "text"
+  await Message.deleteMany({
+    _id: { $in: deleteMessagesIds },
+    messageType: 'text',
+  });
+
+  // storing messagesType === "image"
+  const imageMessagesId = await Message.find({
+    _id: { $in: deleteMessagesIds },
+    messageType: 'image',
+  });
+
+  // delete images from message
+  await Message.deleteMany({
+    _id: { $in: imageMessagesId },
+    messageType: 'image',
+  });
+
+  // delete image from cloudinary
+  imageMessagesId.forEach(async (message) => {
+    await cloudinary.v2.uploader.destroy(message.messagePublicId);
+  });
 
   // remove user from friends, ReceiveFriendRequest and sendFriendsRequest from others users list
   await User.updateMany(
@@ -177,14 +242,6 @@ export const deleteProfileByAdmin = async (req, res) => {
       },
     }
   );
-
-  // delete all messages
-  // const messages = await Message.findByIdAndDelete({
-  //   $or: [
-  //     { senderId: req.user.userId, receiverId: receiverId },
-  //     { receiverId: req.user.userId },
-  //   ],
-  // });
 
   // remove profile image from cloudinary
   const user = await User.findById(userId);
