@@ -35,8 +35,7 @@ export const updateUser = async (req, res) => {
 };
 
 export const getAllUsers = async (req, res) => {
-  const { userId } = req.user;
-  const users = await User.find({ _id: { $ne: userId } });
+  const users = await User.find({});
   res.status(StatusCodes.OK).json({ users });
 };
 
