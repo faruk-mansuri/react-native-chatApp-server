@@ -15,6 +15,7 @@ const MessageSchema = new mongoose.Schema(
       enum: ['text', 'image'],
     },
     message: String,
+    messagePublicId: String,
   },
   { timestamps: true }
 );

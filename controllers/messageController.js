@@ -7,18 +7,21 @@ import mongoose from 'mongoose';
 export const sendMessage = async (req, res) => {
   let { messageType, message } = req.body;
   const { receiverId } = req.params;
+  let messagePublicId;
 
   if (req.file) {
     const file = formatImage(req.file);
     const response = await cloudinary.v2.uploader.upload(file);
     message = response.secure_url;
+    messagePublicId = response.public_id;
   }
 
-  const newMessage = await Message.create({
+  await Message.create({
     senderId: req.user.userId,
     receiverId,
     messageType,
     message,
+    messagePublicId,
   });
 
   res.status(StatusCodes.OK).json({ msg: 'Message sent successfully' });
@@ -40,15 +43,25 @@ export const conversation = async (req, res) => {
 export const deleteMessages = async (req, res) => {
   const { messagesIds } = req.body;
 
-  messagesIds.forEach(async (messageId) => {
-    const message = await Message.findById(messageId);
+  // delete all message where messageType=="text"
+  await Message.deleteMany({ _id: { $in: messagesIds }, messageType: 'text' });
 
-    if (message.messageType === 'image') {
-      await cloudinary.v2.uploader.destroy(message.message);
-    }
+  // storing messages
+  const messages = await Message.find({
+    _id: { $in: messagesIds },
+    messageType: 'image',
   });
 
-  await Message.deleteMany({ _id: { $in: messagesIds } });
+  // delete images from message
+  await Message.deleteMany({
+    _id: { $in: messagesIds },
+    messageType: 'image',
+  });
+
+  // delete image from cloudinary
+  messages.forEach(async (message) => {
+    await cloudinary.v2.uploader.destroy(message.messagePublicId);
+  });
 
   res.status(StatusCodes.OK).json({ msg: 'Messages deleted successfully' });
 };
