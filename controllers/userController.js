@@ -3,7 +3,7 @@ import Message from '../models/MessageModel.js';
 import { StatusCodes } from 'http-status-codes';
 import cloudinary from 'cloudinary';
 import { formatImage } from '../middleware/multerMiddleware.js';
-import { NotFoundError } from '../errors/customError.js';
+import { BadRequestError, NotFoundError } from '../errors/customError.js';
 
 export const getCurrentUser = async (req, res) => {
   // const user = await User.findOne({ _id: req.user.userId }).select('-password');
@@ -43,6 +43,19 @@ export const friendRequest = async (req, res) => {
   const { userId } = req.user;
   const selectedUserId = req.params.id;
 
+  const userAlreadyAFriend = await User.exists({
+    _id: userId,
+    $or: [
+      { ReceiveFriendRequest: selectedUserId },
+      { friends: selectedUserId },
+      { sendFriendsRequest: selectedUserId },
+    ],
+  });
+
+  if (userAlreadyAFriend) {
+    throw new BadRequestError('User Already in connection');
+  }
+
   // add user to friend request
   await User.findByIdAndUpdate(selectedUserId, {
     $push: { ReceiveFriendRequest: userId },
@@ -52,7 +65,6 @@ export const friendRequest = async (req, res) => {
   await User.findByIdAndUpdate(userId, {
     $push: { sendFriendsRequest: selectedUserId },
   });
-  // const
   res.status(StatusCodes.OK).json({ msg: 'friend request' });
 };
 
@@ -69,6 +81,19 @@ export const showAllFriendsRequest = async (req, res) => {
 
 export const acceptFriendRequest = async (req, res) => {
   const requestSenderId = req.params.id;
+
+  const userAlreadyAFriend = await User.exists({
+    _id: req.user.userId,
+    $or: [
+      { ReceiveFriendRequest: requestSenderId },
+      { friends: requestSenderId },
+      { sendFriendsRequest: requestSenderId },
+    ],
+  });
+
+  if (userAlreadyAFriend) {
+    throw new BadRequestError('User Already in connection');
+  }
 
   const user = await User.findById(req.user.userId);
   const sender = await User.findById(requestSenderId);
