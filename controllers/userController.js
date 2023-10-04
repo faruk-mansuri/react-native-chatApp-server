@@ -84,11 +84,7 @@ export const acceptFriendRequest = async (req, res) => {
 
   const userAlreadyAFriend = await User.exists({
     _id: req.user.userId,
-    $or: [
-      { ReceiveFriendRequest: requestSenderId },
-      { friends: requestSenderId },
-      { sendFriendsRequest: requestSenderId },
-    ],
+    friends: requestSenderId,
   });
 
   if (userAlreadyAFriend) {
