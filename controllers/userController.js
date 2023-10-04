@@ -82,9 +82,9 @@ export const showAllFriendsRequest = async (req, res) => {
 export const acceptFriendRequest = async (req, res) => {
   const requestSenderId = req.params.id;
 
-  const userAlreadyAFriend = await User.exists({
+  const userAlreadyAFriend = await User.findOne({
     _id: req.user.userId,
-    friends: requestSenderId,
+    friends: { $elemMatch: { $eq: requestSenderId } },
   });
 
   if (userAlreadyAFriend) {
